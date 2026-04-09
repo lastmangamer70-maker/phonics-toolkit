@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>Let's Segment Those Words | Year 1 Phonics Game</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    body {
+      background: linear-gradient(145deg, #1f6d49 0%, #0f4a2f 100%);
+      font-family: 'Comic Neue', 'Comic Sans MS', 'Chalkboard SE', 'Segoe UI Emoji', system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .game-container {
+      max-width: 1200px;
+      width: 100%;
+      background: #FFF9EF;
+      border-radius: 80px;
+      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.3), inset 0 1px 2px rgba(255,255,240,0.8);
+      overflow: hidden;
+      padding: 20px 24px 40px;
+      transition: all 0.2s;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.6rem;
+      margin: 0 0 5px;
+      background: linear-gradient(135deg, #F4A261, #E76F51);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .game-stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #E9DFC7;
+      padding: 10px 24px;
+      border-radius: 100px;
+      margin-bottom: 28px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .score-board {
+      background: #2F3E46;
+      padding: 6px 20px;
+      border-radius: 40px;
+      color: #F9C74F;
+      font-weight: bold;
+      font-size: 1.6rem;
+      font-family: monospace;
+    }
+
+    .audio-buttons {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .audio-btn {
+      background: #F4A261;
+      border: none;
+      font-size: 1.3rem;
+      padding: 8px 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      font-weight: bold;
+      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 0 #B6602E;
+      transition: 0.07s linear;
+    }
+
+    .audio-btn:active {
+      transform: translateY(2px);
+      box-shadow: 0 2px 0 #B6602E;
+    }
+
+    .replay-word-btn {
+      background: #6C9EBF;
+      box-shadow: 0 4px 0 #3D6B8C;
+    }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #D9C9A7;
+      padding: 5px 16px;
+      border-radius: 50px;
+      box-shadow: inset 0 1px 2px rgba(0,0,0,0.1), 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .speed-label {
+      font-weight: bold;
+      color: #4A3B28;
+      font-size: 0.9rem;
+    }
+
+    .speed-slider {
+      width: 140px;
+      height: 6px;
+      -webkit-appearance: none;
+      background: #FFE8C5;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    .speed-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #E76F51;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+      border: none;
+    }
+
+    .speed-slider::-webkit-slider-thumb:active {
+      transform: scale(1.15);
+    }
+
+    .speed-value {
+      background: #4A3B28;
+      color: #FFE8C5;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: bold;
+      min-width: 55px;
+      text-align: center;
+    }
+
+    .word-card {
+      background: white;
+      border-radius: 70px;
+      padding: 18px 12px 20px;
+      margin-bottom: 30px;
+      text-align: center;
+      border: 3px solid #FADB9F;
+      box-shadow: 0 12px 18px rgba(0,0,0,0.1);
+    }
+
+    .picture-area {
+      margin: 10px auto 15px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .word-picture {
+      font-size: 5.5rem;
+      background: #FFF0D4;
+      width: 140px;
+      height: 140px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .target-word {
+      font-size: 3.6rem;
+      font-weight: 800;
+      letter-spacing: 6px;
+      background: #FDF3E0;
+      display: inline-block;
+      padding: 0.2em 0.9em;
+      border-radius: 90px;
+      color: #4A2F1D;
+      margin: 8px 0;
+      box-shadow: inset 0 -4px 0 #E9C891;
+    }
+
+    .phoneme-grid {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      margin: 30px 0 20px;
+    }
+
+    .sound-card {
+      background: #F7D695;
+      width: 110px;
+      height: 110px;
+      border-radius: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: 0.08s linear;
+      box-shadow: 0 10px 0 #B97F44;
+      font-weight: bold;
+      font-size: 2rem;
+      font-family: monospace;
+      text-transform: lowercase;
+      color: #2C2A24;
+      position: relative;
+    }
+
+    .sound-card:active {
+      transform: translateY(4px);
+      box-shadow: 0 5px 0 #B97F44;
+    }
+
+    .sound-card.correct-highlight {
+      background: #84D976;
+      box-shadow: 0 6px 0 #3C7A2E;
+      transform: translateY(2px);
+    }
+
+    .feedback-area {
+      background: #F4EADB;
+      border-radius: 50px;
+      padding: 12px 20px;
+      margin: 10px 0 20px;
+      font-size: 1.3rem;
+      font-weight: bold;
+      text-align: center;
+      min-height: 70px;
+    }
+
+    .correct-feedback {
+      background: #C8E6C9;
+      color: #2E6B2F;
+      border-left: 12px solid #4CAF50;
+    }
+
+    .wrong-feedback {
+      background: #FFE0CC;
+      color: #C13B1B;
+      border-left: 12px solid #F57C00;
+    }
+
+    .next-area {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .next-btn {
+      background: #4C9F70;
+      border: none;
+      font-size: 1.5rem;
+      padding: 12px 32px;
+      border-radius: 60px;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #2C6E49;
+      transition: 0.05s linear;
+    }
+
+    .next-btn:active {
+      transform: translateY(3px);
+      box-shadow: 0 3px 0 #2C6E49;
+    }
+
+    .reset-btn {
+      background: #E76F51;
+      box-shadow: 0 6px 0 #A44428;
+    }
+
+    .progress {
+      font-size: 0.9rem;
+      background: #E9DFC7;
+      padding: 6px 16px;
+      border-radius: 30px;
+    }
+
+    footer {
+      text-align: center;
+      margin-top: 28px;
+      font-size: 0.8rem;
+      color: #AF8F60;
+    }
+
+    @media (max-width: 650px) {
+      .game-stats {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .audio-buttons {
+        justify-content: center;
+      }
+      .speed-control {
+        justify-content: center;
+      }
+    }
+
+    @media (max-width: 550px) {
+      .sound-card {
+        width: 80px;
+        height: 80px;
+        font-size: 1.5rem;
+      }
+      .target-word {
+        font-size: 2.4rem;
+        letter-spacing: 4px;
+      }
+      .word-picture {
+        width: 100px;
+        height: 100px;
+        font-size: 4rem;
+      }
+      .game-container {
+        padding: 16px;
+      }
+      .audio-btn {
+        font-size: 1rem;
+        padding: 6px 12px;
+      }
+    }
+
+    .bounce-effect {
+      animation: bouncePop 0.25s ease;
+    }
+
+    @keyframes bouncePop {
+      0% { transform: scale(1);}
+      50% { transform: scale(1.08); background-color: #FCE38A;}
+      100% { transform: scale(1);}
+    }
+  </style>
+</head>
+<body>
+<div class="game-container" id="gameApp">
+  <h1>📖 Let's Segment Those Words 🎧</h1>
+
+  <div class="game-stats">
+    <div class="progress">⭐ Year 1 · Tap sounds in order</div>
+    <div class="score-board">🏆 Score: <span id="scoreValue">0</span> / <span id="totalValue">0</span></div>
+    <div class="audio-buttons">
+      <button id="speakWordBtn" class="audio-btn">🔊 Say whole word</button>
+      <button id="replayWordBtn" class="audio-btn replay-word-btn">🔄 Replay word</button>
+      <div class="speed-control">
+        <span class="speed-label">🐢 Speed</span>
+        <input type="range" id="speedSlider" class="speed-slider" min="0.4" max="1.2" step="0.02" value="0.75">
+        <span id="speedValue" class="speed-value">0.75x</span>
+        <span class="speed-label">🐇</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="word-card">
+    <div class="picture-area" id="pictureArea">
+      <div id="wordPictureEmoji" class="word-picture">🐱</div>
+    </div>
+    <div class="target-word" id="currentWordDisplay">cat</div>
+  </div>
+
+  <div id="soundCardsContainer" class="phoneme-grid"></div>
+
+  <div class="feedback-area" id="feedbackMsg"></div>
+
+  <div class="next-area">
+    <button id="nextWordBtn" class="next-btn">✨ Next word ✨</button>
+    <button id="resetGameBtn" class="next-btn reset-btn">🔄 New game</button>
+  </div>
+  <footer>
+    🗣️ Use the speed slider to make the word sound slower or faster. Listen carefully, then tap the letter buttons in the correct order.
+    <br><br>
+    💡 <strong>Share this game:</strong> Save this file as .html and open in any browser. Works offline! No internet needed after loading.
+  </footer>
+</div>
+
+<script>
+  // ============================================================
+  // LET'S SEGMENT THOSE WORDS - Year 1 Phonics Game
+  // Complete self-contained HTML file with audio (SpeechSynthesis API)
+  // No external dependencies - works offline, share as single file
+  // ============================================================
+  
+  // Speed control variable (default 0.75 = slower for young learners)
+  let currentSpeechRate = 0.75;
+  
+  // Function to speak the whole word at the selected speed
+  function speakFullWordOnce(word, rate = currentSpeechRate) {
+    if (!window.speechSynthesis) {
+      console.warn("SpeechSynthesis not supported in this browser");
+      return;
+    }
+    // Cancel any ongoing speech to prevent overlapping
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(word);
+    utterance.rate = rate;
+    utterance.pitch = 1.0;
+    utterance.lang = "en-GB";
+    window.speechSynthesis.speak(utterance);
+  }
+  
+  // Word bank with emoji pictures - 17 common Year 1 words
+  const WORD_SET = [
+    { text: "cat", phonemes: ["c", "a", "t"], emoji: "🐱" },
+    { text: "dog", phonemes: ["d", "o", "g"], emoji: "🐶" },
+    { text: "fish", phonemes: ["f", "i", "sh"], emoji: "🐟" },
+    { text: "sheep", phonemes: ["sh", "ee", "p"], emoji: "🐑" },
+    { text: "chick", phonemes: ["ch", "i", "ck"], emoji: "🐤" },
+    { text: "duck", phonemes: ["d", "u", "ck"], emoji: "🦆" },
+    { text: "moon", phonemes: ["m", "oo", "n"], emoji: "🌙" },
+    { text: "rain", phonemes: ["r", "ai", "n"], emoji: "☔" },
+    { text: "frog", phonemes: ["f", "r", "o", "g"], emoji: "🐸" },
+    { text: "stop", phonemes: ["s", "t", "o", "p"], emoji: "🛑" },
+    { text: "play", phonemes: ["p", "l", "ay"], emoji: "🎮" },
+    { text: "tree", phonemes: ["t", "r", "ee"], emoji: "🌳" },
+    { text: "nest", phonemes: ["n", "e", "s", "t"], emoji: "🪹" },
+    { text: "bell", phonemes: ["b", "e", "ll"], emoji: "🔔" },
+    { text: "light", phonemes: ["l", "igh", "t"], emoji: "💡" },
+    { text: "buzz", phonemes: ["b", "u", "zz"], emoji: "🐝" },
+    { text: "king", phonemes: ["k", "i", "ng"], emoji: "👑" }
+  ];
+
+  // Game state variables
+  let activeWordList = [];
+  let currentWordIndex = 0;
+  let currentWordObject = null;
+  let currentPhonemesArray = [];
+  let expectedIndices = [];
+  let userClickedIndices = [];
+  let wordCompleted = false;
+  let score = 0;
+  let totalWordsAttempted = 0;
+  
+  // DOM element references
+  const currentWordDisplay = document.getElementById("currentWordDisplay");
+  const soundContainer = document.getElementById("soundCardsContainer");
+  const feedbackDiv = document.getElementById("feedbackMsg");
+  const scoreSpan = document.getElementById("scoreValue");
+  const totalSpan = document.getElementById("totalValue");
+  const nextBtn = document.getElementById("nextWordBtn");
+  const resetBtn = document.getElementById("resetGameBtn");
+  const speakWordBtn = document.getElementById("speakWordBtn");
+  const replayWordBtn = document.getElementById("replayWordBtn");
+  const wordPictureEmoji = document.getElementById("wordPictureEmoji");
+  const speedSlider = document.getElementById("speedSlider");
+  const speedValueSpan = document.getElementById("speedValue");
+  
+  // Shuffle array for random word order
+  function shuffleArray(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  
+  // Speak current word using current speed setting
+  function speakFullWord() {
+    if (!currentWordObject) return;
+    speakFullWordOnce(currentWordObject.text, currentSpeechRate);
+  }
+  
+  // Update speed display and store value
+  function updateSpeed() {
+    currentSpeechRate = parseFloat(speedSlider.value);
+    speedValueSpan.textContent = currentSpeechRate.toFixed(2) + "x";
+  }
+  
+  // Speed slider event listener
+  speedSlider.addEventListener("input", function() {
+    updateSpeed();
+  });
+  
+  // Update the emoji picture for current word
+  function updatePicture() {
+    if (currentWordObject && currentWordObject.emoji) {
+      wordPictureEmoji.innerHTML = currentWordObject.emoji;
+      wordPictureEmoji.style.fontSize = "5.5rem";
+    } else {
+      wordPictureEmoji.innerHTML = "📖";
+    }
+  }
+  
+  // Render the sound buttons (shuffled each time)
+  function renderSoundButtons() {
+    if (!currentWordObject) return;
+    const phonemes = currentPhonemesArray;
+    let items = phonemes.map((ph, idx) => ({ phoneme: ph, originalIdx: idx }));
+    // Shuffle for challenge
+    for (let i = items.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [items[i], items[j]] = [items[j], items[i]];
+    }
+    soundContainer.innerHTML = "";
+    items.forEach(item => {
+      const card = document.createElement("div");
+      card.className = "sound-card";
+      if (userClickedIndices.includes(item.originalIdx)) {
+        card.classList.add("correct-highlight");
+      }
+      card.innerHTML = `<div style="font-size:2rem; font-weight:bold;">${item.phoneme}</div>`;
+      card.setAttribute("data-original-idx", item.originalIdx);
+      card.setAttribute("data-phoneme", item.phoneme);
+      
+      card.addEventListener("click", (e) => {
+        e.stopPropagation();
+        // No individual letter sounds - silent tapping (teacher-led or child-led segmenting)
+        
+        if (wordCompleted) return;
+        
+        const originalIdx = parseInt(card.getAttribute("data-original-idx"));
+        handleSegmentClick(originalIdx, card);
+      });
+      
+      soundContainer.appendChild(card);
+    });
+  }
+  
+  // Handle when a sound button is clicked (segmenting logic)
+  function handleSegmentClick(clickedOriginalIdx, cardElement) {
+    if (wordCompleted) return;
+    
+    const nextExpectedIndex = expectedIndices[userClickedIndices.length];
+    if (clickedOriginalIdx === nextExpectedIndex) {
+      // Correct order
+      userClickedIndices.push(clickedOriginalIdx);
+      cardElement.classList.add("correct-highlight");
+      cardElement.classList.add("bounce-effect");
+      setTimeout(() => cardElement.classList.remove("bounce-effect"), 200);
+      
+      feedbackDiv.innerHTML = `✅ Correct! '${currentPhonemesArray[clickedOriginalIdx]}' ✅`;
+      feedbackDiv.classList.add("correct-feedback");
+      feedbackDiv.classList.remove("wrong-feedback");
+      
+      // Check if word is fully segmented
+      if (userClickedIndices.length === currentPhonemesArray.length) {
+        wordCompleted = true;
+        score++;
+        totalWordsAttempted++;
+        updateScoreUI();
+        feedbackDiv.innerHTML = `🎉 +1 point! You segmented "${currentWordObject.text}"! 🎉`;
+        feedbackDiv.classList.add("correct-feedback");
+        
+        const wordCardDiv = document.querySelector(".word-card");
+        wordCardDiv.classList.add("bounce-effect");
+        setTimeout(() => wordCardDiv.classList.remove("bounce-effect"), 400);
+      } else {
+        setTimeout(() => {
+          if (!wordCompleted && feedbackDiv.innerHTML.includes("Correct")) {
+            feedbackDiv.innerHTML = `👍 ${userClickedIndices.length}/${currentPhonemesArray.length} sounds done! 👍`;
+          }
+        }, 1000);
+      }
+    } else {
+      // Wrong order - provide helpful feedback
+      const expectedPhoneme = currentPhonemesArray[nextExpectedIndex];
+      feedbackDiv.innerHTML = `❌ Try '${expectedPhoneme}' next! ❌`;
+      feedbackDiv.classList.add("wrong-feedback");
+      feedbackDiv.classList.remove("correct-feedback");
+      cardElement.style.transform = "translateX(5px)";
+      setTimeout(() => { if (cardElement) cardElement.style.transform = ""; }, 150);
+    }
+  }
+  
+  // Update the score display
+  function updateScoreUI() {
+    scoreSpan.innerText = score;
+    totalSpan.innerText = totalWordsAttempted;
+  }
+  
+  // Load a word by index
+  function loadWord(index) {
+    if (index >= activeWordList.length) {
+      finishAllWords();
+      return;
+    }
+    currentWordObject = activeWordList[index];
+    currentWordDisplay.innerText = currentWordObject.text;
+    currentPhonemesArray = [...currentWordObject.phonemes];
+    expectedIndices = currentPhonemesArray.map((_, idx) => idx);
+    userClickedIndices = [];
+    wordCompleted = false;
+    updatePicture();
+    feedbackDiv.innerHTML = "";
+    feedbackDiv.classList.remove("correct-feedback", "wrong-feedback");
+    renderSoundButtons();
+  }
+  
+  // Finish the game - show completion screen
+  function finishAllWords() {
+    currentWordDisplay.innerText = "🏁 COMPLETE! 🏁";
+    wordPictureEmoji.innerHTML = "🏆🎓";
+    soundContainer.innerHTML = "<div style='font-size:1.6rem; padding:20px; text-align:center;'>🎉 Amazing segmenting! 🎉<br>Press 'New game' to play more.</div>";
+    feedbackDiv.innerHTML = `✨ Final score: ${score} out of ${totalWordsAttempted} ✨`;
+    feedbackDiv.classList.add("correct-feedback");
+    nextBtn.disabled = true;
+    nextBtn.style.opacity = "0.6";
+    nextBtn.style.cursor = "default";
+  }
+  
+  // Handle next word button
+  function nextWordHandler() {
+    if (currentWordIndex >= activeWordList.length && activeWordList.length > 0 && currentWordDisplay.innerText.includes("COMPLETE")) {
+      resetGame();
+      return;
+    }
+    if (!wordCompleted && currentWordObject && userClickedIndices.length < currentPhonemesArray.length) {
+      if (userClickedIndices.length === 0) {
+        feedbackDiv.innerHTML = `⏩ Skipping "${currentWordObject.text}" ⏩`;
+      } else {
+        feedbackDiv.innerHTML = `⏩ ${userClickedIndices.length}/${currentPhonemesArray.length} done. Next word! ⏩`;
+      }
+      feedbackDiv.classList.add("wrong-feedback");
+      totalWordsAttempted++;
+      updateScoreUI();
+      setTimeout(() => {
+        if (feedbackDiv.innerHTML.includes("⏩")) feedbackDiv.classList.remove("wrong-feedback");
+      }, 1500);
+    }
+    currentWordIndex++;
+    if (currentWordIndex < activeWordList.length) {
+      loadWord(currentWordIndex);
+    } else {
+      finishAllWords();
+    }
+  }
+  
+  // Reset the entire game
+  function resetGame() {
+    window.speechSynthesis.cancel();
+    activeWordList = shuffleArray([...WORD_SET]);
+    currentWordIndex = 0;
+    score = 0;
+    totalWordsAttempted = 0;
+    updateScoreUI();
+    nextBtn.disabled = false;
+    nextBtn.style.opacity = "1";
+    nextBtn.style.cursor = "pointer";
+    loadWord(0);
+  }
+  
+  // Replay current word - reset state for practice
+  function replayCurrentWord() {
+    if (!currentWordObject) return;
+    // Reset the current word state so they can practice again
+    userClickedIndices = [];
+    wordCompleted = false;
+    feedbackDiv.innerHTML = "🔄 Try again! Tap the sounds in order. 🔄";
+    feedbackDiv.classList.add("correct-feedback");
+    setTimeout(() => {
+      if (feedbackDiv.innerHTML.includes("Try again")) {
+        feedbackDiv.innerHTML = "";
+        feedbackDiv.classList.remove("correct-feedback");
+      }
+    }, 2000);
+    // Re-render buttons to reset highlights
+    renderSoundButtons();
+    // Speak the word at the current speed setting to remind them
+    speakFullWordOnce(currentWordObject.text, currentSpeechRate);
+  }
+  
+  // Button event listeners
+  nextBtn.addEventListener("click", nextWordHandler);
+  resetBtn.addEventListener("click", () => resetGame());
+  speakWordBtn.addEventListener("click", () => {
+    if (currentWordObject && !currentWordDisplay.innerText.includes("COMPLETE")) {
+      speakFullWord();
+    }
+  });
+  replayWordBtn.addEventListener("click", () => {
+    if (currentWordObject && !currentWordDisplay.innerText.includes("COMPLETE")) {
+      replayCurrentWord();
+    } else if (currentWordDisplay.innerText.includes("COMPLETE")) {
+      resetGame();
+    }
+  });
+  
+  // Initialize the game
+  function init() {
+    activeWordList = shuffleArray([...WORD_SET]);
+    currentWordIndex = 0;
+    score = 0;
+    totalWordsAttempted = 0;
+    updateSpeed();
+    updateScoreUI();
+    loadWord(0);
+  }
+  
+  init();
+</script>
+</body>
+</html>
